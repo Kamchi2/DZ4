@@ -12,6 +12,7 @@ public class Main {
     public static String bossDefenceType = "";
     public static int roundNumber = 0;
     public static int backDamage = 0;
+    public static int golemIndex;
 
     public static void main(String[] args) {
         printStatistics();
@@ -55,8 +56,7 @@ public class Main {
                         bossHealth = bossHealth - heroesDamage[i] * coef;
                     }
                 } else {
-                    if (bossHealth <=
-                            heroesDamage[i]) {
+                    if (bossHealth <= heroesDamage[i]) {
                         bossHealth = 0;
                     } else if (heroesAttackType[i] == "Medic") {
                         for (int o = 0; o < 999; o++) {
@@ -79,41 +79,46 @@ public class Main {
     }
 
     public static void bossHits() {
+        for (int h = 0; h < heroesAttackType.length; h++) {
+            if (heroesAttackType[h] == "Golem") {
+                golemIndex = h;
+            }
+        }
         for (int i = 0; i < heroesHealth.length; i++) {
-            if (heroesHealth[4] > bossDamage - (bossDamage / 5) && heroesHealth[i] > bossDamage - (bossDamage / 5)) {
+            if (heroesHealth[golemIndex] > bossDamage - (bossDamage / 5) && heroesHealth[i] > bossDamage - (bossDamage / 5)) {
                 if (heroesAttackType[i] == "Lucky") {
                     int chanceForward = random.nextInt(2);
                     if (chanceForward == 1) {
                     } else {
-                        heroesHealth[i] = heroesHealth[i] - (bossDamage - (bossDamage / 5));
-                        heroesHealth[4] = heroesHealth[4] - bossDamage / 5;
+                        heroesHealth[i] -= (bossDamage - (bossDamage / 5));
+                        heroesHealth[golemIndex] -= bossDamage / 5;
                     }
                 } else if (heroesAttackType[i] == "Berserk") {
-                    bossHealth = bossHealth - backDamage;
-                    heroesHealth[i] = heroesHealth[i] - ((bossDamage - (bossDamage / 5)) / 2);
-                    heroesHealth[4] = heroesHealth[4] - bossDamage / 5;
-                    backDamage = backDamage + heroesHealth[i] - ((bossDamage - (bossDamage / 5)) / 2);
+                    bossHealth -= backDamage;
+                    heroesHealth[i] -= ((bossDamage - (bossDamage / 5)) / 2);
+                    heroesHealth[golemIndex] -= bossDamage / 5;
+                    backDamage = (backDamage + heroesHealth[i]) - ((bossDamage - (bossDamage / 5)) / 2);
                 } else {
-                    heroesHealth[i] = heroesHealth[i] - (bossDamage - (bossDamage / 5));
-                    heroesHealth[4] = heroesHealth[4] - bossDamage / 5;
+                    heroesHealth[i] -= (bossDamage - (bossDamage / 5));
+                    heroesHealth[golemIndex] -= bossDamage / 5;
                 }
             } else if (heroesHealth[i] > bossDamage && heroesAttackType[i] == "Lucky") {
                 int chanceForward = random.nextInt(2);
                 if (chanceForward == 1) {
                 } else {
-                    heroesHealth[i] = heroesHealth[i] - bossDamage;
+                    heroesHealth[i] -= bossDamage;
                 }
             } else if (heroesHealth[i] > bossDamage && heroesAttackType[i] == "Thor") {
                 int chanceFreeze = random.nextInt(5);
                 if (chanceFreeze == 1) {
                     bossDamage = 0;
                 } else {
-                    heroesHealth[i] = heroesHealth[i] - bossDamage;
+                    heroesHealth[i] -= bossDamage;
                 }
             } else if (heroesHealth[i] > (bossDamage / 2) && heroesAttackType[i] == "Berserk") {
-                bossHealth = bossHealth - backDamage;
-                heroesHealth[i] = heroesHealth[i] - (bossDamage / 2);
-                backDamage = backDamage + heroesHealth[i] - (bossDamage - (heroesHealth[i] / 2));
+                bossHealth -= backDamage;
+                heroesHealth[i] -= (bossDamage / 2);
+                backDamage = (backDamage + heroesHealth[i]) - (bossDamage - (heroesHealth[i] / 2));
             } else if (heroesHealth[i] > bossDamage) {
                 heroesHealth[i] = heroesHealth[i] - bossDamage;
                 int chanceForward = random.nextInt(2);
@@ -131,8 +136,7 @@ public class Main {
         System.out.println(roundNumber + " ROUND----------------");
         System.out.println("Boss health " + bossHealth + " [" + bossDamage + "]");
         for (int i = 0; i < heroesAttackType.length; i++) {
-            System.out.println(heroesAttackType[i] + " health "
-                    + heroesHealth[i] + " [" + heroesDamage[i] + "]");
+            System.out.println(heroesAttackType[i] + " health " + heroesHealth[i] + " [" + heroesDamage[i] + "]");
         }
         System.out.println("----------------");
     }
